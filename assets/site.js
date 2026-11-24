@@ -41,7 +41,7 @@ if (servingControl) {
   const plus = document.querySelector('#plus');
   const output = document.querySelector('#servings');
   const amounts = document.querySelectorAll('[data-amount]');
-  const format = new Intl.NumberFormat('en',{maximumSignificantDigits:8, useGrouping:false});
+  const format = new Intl.NumberFormat('en',{maximumSignificantDigits:3, useGrouping:false});
   function adjust(change) {
     servings += change;
     output.textContent = servings;
@@ -49,7 +49,7 @@ if (servingControl) {
     plus.disabled = servings >= 999;
     for (const amount of amounts) {
       const {unit, approx, max} = amount.dataset;
-      const scale = value => format.format(Number(value) * servings / base);
+      const scale = value => servings === base ? value : format.format(Number(value) * servings / base);
       amount.textContent = [approx === 'true' ? '≈ ' : '', scale(amount.dataset.amount), max ? '–' + scale(max) : '', unit ? ' ' + unit : ''].join('');
     }
   }

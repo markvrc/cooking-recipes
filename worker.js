@@ -1,25 +1,27 @@
 const seed = {
   id: 'vegan-high-protein-gluten-buns',
-  name: 'Vegan High-Protein Gluten Buns',
-  description: 'Golden, chewy buns with a soft center. Slice one for a sandwich or tear it open while it’s warm.',
+  name: 'Vegan High-Protein Buns Without Semolina',
+  description: 'Yeast-free, oven-baked buns with a soft, dense crumb. Cornstarch makes the dough less elastic, so add the water gradually.',
   servings: 3, servingUnit: 'buns', time: '20–25 min baking',
   tags: ['Vegan', 'High Protein'],
   ingredients: [
     {name:'Vital wheat gluten', amount:60, unit:'g'},
-    {name:'Refined semolina', amount:20, unit:'g'},
+    {name:'Cornstarch', amount:35, unit:'g'},
     {name:'Soy protein isolate', amount:20, unit:'g'},
     {name:'Maple syrup', amount:10, unit:'g'},
     {name:'Olive oil', amount:5, unit:'g'},
+    {name:'Baking powder', amount:4, unit:'g'},
     {name:'Salt', amount:2, unit:'g'},
-    {name:'Water', amount:110, max:135, unit:'ml', approx:true}
+    {name:'Water', amount:100, max:130, unit:'ml', approx:true}
   ],
   steps: [
-    'Mix the dry ingredients.',
-    'Add maple syrup and olive oil.',
-    'Gradually add water until a soft, slightly sticky dough forms.',
+    'Preheat the oven to 180°C.',
+    'Mix the vital wheat gluten, cornstarch, soy protein isolate, baking powder, and salt.',
+    'Add the maple syrup, olive oil, and about the lower end of the water range (100 ml for three buns).',
+    'Gradually add more water until a soft, slightly sticky dough forms.',
     'Knead briefly, approximately 1–2 minutes.',
-    'Divide into three slightly flattened buns.',
-    'Bake at 180°C for approximately 20–25 minutes, checking that the centers are cooked through.'
+    'Divide the dough into equal portions and shape into slightly flattened buns.',
+    'Bake for 20–25 minutes, checking that the centers are cooked through.'
   ],
   photo: '/buns.webp', nutrition: ''
 };
@@ -35,7 +37,7 @@ const photo = (recipe, lazy = false) => recipe.photo
   : '<div class="placeholder" aria-hidden="true"></div>';
 
 function page(title, body, status = 200, description = 'A personal collection of vegan recipes.') {
-  return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="${esc(description)}"><title>${esc(title)} · The Green Crumb</title><link rel="stylesheet" href="/style.css"><script defer src="/site.js"></script></head><body><header><nav class="wrap nav" aria-label="Main"><a class="brand" href="/">${leaf} The Green Crumb</a><a class="nav-link" href="/#recipes">Recipes</a></nav></header>${body}<footer><div class="wrap footer-row"><span>The Green Crumb</span><a href="/admin">Manage recipes</a></div></footer></body></html>`, {
+  return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="${esc(description)}"><title>${esc(title)} · The Green Collection</title><link rel="stylesheet" href="/style.css"><script defer src="/site.js"></script></head><body><header><nav class="wrap nav" aria-label="Main"><a class="brand" href="/">${leaf} The Green Collection</a><a class="nav-link" href="/#recipes">Recipes</a></nav></header>${body}<footer><div class="wrap footer-row"><span>The Green Collection</span><a href="/admin">Manage recipes</a></div></footer></body></html>`, {
     status, headers: {
       'Content-Type':'text/html; charset=utf-8', 'X-Content-Type-Options':'nosniff',
       'Cache-Control':'no-store', 'Referrer-Policy':'strict-origin-when-cross-origin',
@@ -55,8 +57,17 @@ function home(recipes) {
   return page('Vegan recipes', `<main class="wrap"><section class="hero"><div class="hero-copy"><p class="eyebrow">The plant-based recipe collection</p><h1>Good food,<br><em>grown from plants.</em></h1><p>Find something delicious to cook, whatever’s on your ingredient list.</p></div><div class="hero-photo"><img src="/buns.webp" alt="Golden homemade wheat buns on a ceramic plate" fetchpriority="high"></div></section><section class="collection" id="recipes"><div class="section-head"><div><p class="eyebrow">The recipe box</p><h2>Browse recipes</h2></div><label class="search">${searchIcon}<input id="search" type="search" placeholder="Search recipes…" aria-label="Search recipes"></label></div><div class="filters" aria-label="Dietary filters"><button class="pill" data-filter="" aria-pressed="true">All recipes</button>${Array.from(tags, ([key, label]) => `<button class="pill" data-filter="${esc(key)}" aria-pressed="false">${esc(label)}</button>`).join('')}</div><p class="count" id="count" aria-live="polite">${recipes.length} ${recipes.length === 1 ? 'recipe' : 'recipes'}</p><div class="grid">${cards}</div><p id="empty" class="empty"${recipes.length ? ' hidden' : ''}>No recipes match. Try a different search or clear a filter.</p></section></main>`);
 }
 
+const greenMondayIngredients = new Set(['vital wheat gluten', 'soy protein isolate']);
+
+function ingredientName(name) {
+  const label = esc(name);
+  return greenMondayIngredients.has(name.trim().toLowerCase())
+    ? '<a href="https://greenmonday.cy/">' + label + '</a>'
+    : label;
+}
+
 function detail(recipe) {
-  const rows = recipe.ingredients.map(item => `<li><span>${esc(item.name)}</span><span data-amount="${item.amount}" data-max="${item.max ?? ''}" data-unit="${esc(item.unit)}" data-approx="${Boolean(item.approx)}">${item.approx ? '≈ ' : ''}${item.amount}${item.max == null ? '' : '–'+item.max} ${esc(item.unit)}</span></li>`).join('');
+  const rows = recipe.ingredients.map(item => `<li><span>${ingredientName(item.name)}</span><span data-amount="${item.amount}" data-max="${item.max ?? ''}" data-unit="${esc(item.unit)}" data-approx="${Boolean(item.approx)}">${item.approx ? '≈ ' : ''}${item.amount}${item.max == null ? '' : '–'+item.max} ${esc(item.unit)}</span></li>`).join('');
   return page(recipe.name, `<main class="wrap detail"><a class="back" href="/#recipes">Back to recipes</a><div class="detail-head"><div>${time(recipe)}<h1>${esc(recipe.name)}</h1><p>${esc(recipe.description)}</p>${pills(recipe.tags)}</div>${photo(recipe)}</div><div class="recipe-body"><section class="ingredients"><h2>Ingredients</h2><div class="servings" data-base="${recipe.servings}"><span>Servings</span><button type="button" id="minus" aria-label="Decrease servings"${recipe.servings === 1 ? ' disabled' : ''}>−</button><output id="servings" aria-live="polite">${recipe.servings}</output><button type="button" id="plus" aria-label="Increase servings"${recipe.servings === 999 ? ' disabled' : ''}>+</button><span>${esc(recipe.servingUnit)}</span></div><ul class="ingredient-list">${rows}</ul></section><section><h2>Instructions</h2><ol class="steps">${recipe.steps.map(step => '<li>'+esc(step)+'</li>').join('')}</ol>${recipe.nutrition ? '<section class="nutrition"><h2>Nutrition</h2><p>'+esc(recipe.nutrition)+'</p></section>' : ''}</section></div></main>`, 200, recipe.description);
 }
 
