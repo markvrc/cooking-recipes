@@ -3,7 +3,7 @@ const seed = {
   name: 'Vegan High-Protein Buns Without Semolina',
   description: 'Yeast-free, oven-baked buns with a soft, dense crumb. Cornstarch makes the dough less elastic, so add the water gradually.',
   servings: 3, servingUnit: 'buns', time: '20–25 min baking',
-  tags: ['Vegan', 'High Protein'],
+  tags: ['Vegan', 'High Protein', 'Low FODMAP', 'Low Fiber'],
   ingredients: [
     {name:'Vital wheat gluten', amount:60, unit:'g'},
     {name:'Cornstarch', amount:35, unit:'g'},
