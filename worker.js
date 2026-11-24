@@ -21,6 +21,7 @@ const seed = {
     'Gradually add more water until a soft, slightly sticky dough forms.',
     'Knead briefly, approximately 1–2 minutes.',
     'Divide the dough into equal portions and shape into slightly flattened buns.',
+    'Lightly brush the tops of the buns with a little extra olive oil before baking.',
     'Bake for 20–25 minutes, checking that the centers are cooked through.'
   ],
   photo: '/buns.webp',
@@ -34,7 +35,7 @@ const seed = {
     'Other amino acids per bun',
     'Alanine 0.71 g · Arginine 1.15 g · Aspartic acid 1.28 g · Cysteine/cystine 0.36 g · Glutamic acid/glutamine 5.93 g · Glycine 0.81 g · Proline 1.74 g · Serine 0.89 g · Tyrosine 0.58 g',
     '',
-    'Macros use USDA ingredient data. The amino acid estimate uses representative wheat-gluten and soy-isolate profiles. Values vary by brand and bun size.'
+    'Macros use USDA ingredient data. The amino acid estimate uses representative wheat-gluten and soy-isolate profiles. Values vary by brand and bun size. The estimates exclude the optional olive oil brushed on top and any maple syrup added for serving.'
   ].join('\n')
 };
 const standardTags = ['Vegan','High Protein','Low FODMAP','Low Fiber','High Fiber','High Iron','Gluten Free','Low Calorie'];
