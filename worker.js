@@ -23,7 +23,19 @@ const seed = {
     'Divide the dough into equal portions and shape into slightly flattened buns.',
     'Bake for 20–25 minutes, checking that the centers are cooked through.'
   ],
-  photo: '/buns.webp', nutrition: ''
+  photo: '/buns.webp',
+  nutrition: [
+    'Estimated per bun (one-third of the recipe)',
+    '165 kcal · 21 g protein · 16 g total carbohydrate · 2.3 g fat',
+    '',
+    'Essential amino acids per bun',
+    'Histidine 0.42 g · Isoleucine 0.73 g · Leucine 1.47 g · Lysine 0.78 g · Methionine 0.36 g · Phenylalanine 0.97 g · Threonine 0.60 g · Tryptophan 0.27 g · Valine 0.95 g',
+    '',
+    'Other amino acids per bun',
+    'Alanine 0.71 g · Arginine 1.15 g · Aspartic acid 1.28 g · Cysteine/cystine 0.36 g · Glutamic acid/glutamine 5.93 g · Glycine 0.81 g · Proline 1.74 g · Serine 0.89 g · Tyrosine 0.58 g',
+    '',
+    'Macros use USDA ingredient data. The amino acid estimate uses representative wheat-gluten and soy-isolate profiles. Values vary by brand and bun size.'
+  ].join('\n')
 };
 const standardTags = ['Vegan','High Protein','Low FODMAP','Low Fiber','High Fiber','High Iron','Gluten Free','Low Calorie'];
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
@@ -66,9 +78,17 @@ function ingredientName(name) {
     : label;
 }
 
+function nutritionPanel(recipe) {
+  if (!recipe.nutrition) return '';
+  const sources = recipe.id === seed.id && recipe.nutrition === seed.nutrition
+    ? '<p class="nutrition-sources"><a href="https://fdc.nal.usda.gov/">USDA FoodData Central</a> · <a href="https://biolayne.com/app/uploads/publications/Layne-Norton-PhD-Thesis.pdf#page=34">Wheat gluten amino acid reference</a></p>'
+    : '';
+  return '<section class="nutrition"><h2>Nutrition</h2><p>' + esc(recipe.nutrition) + '</p>' + sources + '</section>';
+}
+
 function detail(recipe) {
   const rows = recipe.ingredients.map(item => `<li><span>${ingredientName(item.name)}</span><span data-amount="${item.amount}" data-max="${item.max ?? ''}" data-unit="${esc(item.unit)}" data-approx="${Boolean(item.approx)}">${item.approx ? '≈ ' : ''}${item.amount}${item.max == null ? '' : '–'+item.max} ${esc(item.unit)}</span></li>`).join('');
-  return page(recipe.name, `<main class="wrap detail"><a class="back" href="/#recipes">Back to recipes</a><div class="detail-head"><div>${time(recipe)}<h1>${esc(recipe.name)}</h1><p>${esc(recipe.description)}</p>${pills(recipe.tags)}</div>${photo(recipe)}</div><div class="recipe-body"><section class="ingredients"><h2>Ingredients</h2><div class="servings" data-base="${recipe.servings}"><span>Servings</span><button type="button" id="minus" aria-label="Decrease servings"${recipe.servings === 1 ? ' disabled' : ''}>−</button><output id="servings" aria-live="polite">${recipe.servings}</output><button type="button" id="plus" aria-label="Increase servings"${recipe.servings === 999 ? ' disabled' : ''}>+</button><span>${esc(recipe.servingUnit)}</span></div><ul class="ingredient-list">${rows}</ul></section><section><h2>Instructions</h2><ol class="steps">${recipe.steps.map(step => '<li>'+esc(step)+'</li>').join('')}</ol>${recipe.nutrition ? '<section class="nutrition"><h2>Nutrition</h2><p>'+esc(recipe.nutrition)+'</p></section>' : ''}</section></div></main>`, 200, recipe.description);
+  return page(recipe.name, `<main class="wrap detail"><a class="back" href="/#recipes">Back to recipes</a><div class="detail-head"><div>${time(recipe)}<h1>${esc(recipe.name)}</h1><p>${esc(recipe.description)}</p>${pills(recipe.tags)}</div>${photo(recipe)}</div><div class="recipe-body"><section class="ingredients"><h2>Ingredients</h2><div class="servings" data-base="${recipe.servings}"><span>Servings</span><button type="button" id="minus" aria-label="Decrease servings"${recipe.servings === 1 ? ' disabled' : ''}>−</button><output id="servings" aria-live="polite">${recipe.servings}</output><button type="button" id="plus" aria-label="Increase servings"${recipe.servings === 999 ? ' disabled' : ''}>+</button><span>${esc(recipe.servingUnit)}</span></div><ul class="ingredient-list">${rows}</ul></section><section><h2>Instructions</h2><ol class="steps">${recipe.steps.map(step => '<li>'+esc(step)+'</li>').join('')}</ol>${nutritionPanel(recipe)}</section></div></main>`, 200, recipe.description);
 }
 
 function admin() {
